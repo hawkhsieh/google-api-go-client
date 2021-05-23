@@ -56,7 +56,7 @@ import (
 	"strings"
 
 	googleapi "google.golang.org/api/googleapi"
-	gensupport "google.golang.org/api/internal/gensupport"
+	gensupport "github.com/hawkhsieh/google-api-go-client/api/internal/gensupport"
 	option "google.golang.org/api/option"
 	internaloption "google.golang.org/api/option/internaloption"
 	htransport "google.golang.org/api/transport/http"
@@ -9522,7 +9522,10 @@ func (c *ObjectsDeleteCall) Do(opts ...googleapi.CallOption) error {
 	// }
 
 }
-
+type Range struct {
+   From int
+   To int
+}
 // method id "storage.objects.get":
 
 type ObjectsGetCall struct {
@@ -9533,6 +9536,7 @@ type ObjectsGetCall struct {
 	ifNoneMatch_ string
 	ctx_         context.Context
 	header_      http.Header
+    byteRange    *Range
 }
 
 // Get: Retrieves an object or its metadata.
@@ -9540,8 +9544,8 @@ type ObjectsGetCall struct {
 // - bucket: Name of the bucket in which the object resides.
 // - object: Name of the object. For information about how to URL encode
 //   object names to be path safe, see Encoding URI Path Parts.
-func (r *ObjectsService) Get(bucket string, object string) *ObjectsGetCall {
-	c := &ObjectsGetCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+func (r *ObjectsService) Get(bucket string, object string, rang *Range) *ObjectsGetCall {
+	c := &ObjectsGetCall{s: r.s, urlParams_: make(gensupport.URLParams),byteRange:rang}
 	c.bucket = bucket
 	c.object = object
 	return c
@@ -9659,6 +9663,11 @@ func (c *ObjectsGetCall) doRequest(alt string) (*http.Response, error) {
 		reqHeaders[k] = v
 	}
 	reqHeaders.Set("User-Agent", c.s.userAgent())
+    if c.byteRange != nil {
+        rb := fmt.Sprintf( "bytes=%d-%d" ,c.byteRange.From,c.byteRange.To)
+        reqHeaders.Set("Range", rb )
+    }
+
 	if c.ifNoneMatch_ != "" {
 		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
 	}
