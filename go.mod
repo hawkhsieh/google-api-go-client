@@ -1,4 +1,4 @@
-module google.golang.org/api
+module github.com/hawkhsieh/google-api-go-client/api
 
 go 1.11
 
