@@ -9664,7 +9664,12 @@ func (c *ObjectsGetCall) doRequest(alt string) (*http.Response, error) {
 	}
 	reqHeaders.Set("User-Agent", c.s.userAgent())
     if c.byteRange != nil {
-        rb := fmt.Sprintf( "bytes=%d-%d" ,c.byteRange.From,c.byteRange.To)
+		rb := ""
+		if c.byteRange.To == -1 {
+			rb = fmt.Sprintf( "bytes=%d-" ,c.byteRange.From)
+		}else{
+			rb = fmt.Sprintf( "bytes=%d-%d" ,c.byteRange.From,c.byteRange.To)
+		}
         reqHeaders.Set("Range", rb )
     }
 
